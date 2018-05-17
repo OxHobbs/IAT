@@ -6,8 +6,9 @@ This module provides a general toolset of cmdlets that are used to manage the va
 
 ## Using this module
 
+<Instructions on installing and using module>
 
-### ChangeLog
+## ChangeLog
 
-#### v0.1.0
+### v0.1.0
 - Initial release
