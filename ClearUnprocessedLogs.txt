@@ -1,0 +1,182 @@
+param
+(
+	[Int] $ToProcessLimit,
+	[Int] $ProcessTimeout = 5,
+	[Int] $QueueShrinkTimeout = 180
+)
+
+
+
+#region functions
+Function Test-LRHealth
+{
+	$lrLog = "C:\Program Files\LogRhythm\LogRhythm Mediator Server\logs\scmedsvr.log"
+	return - not ((Get-Content $lrLog -Tail 1) -match "Unprocessed log realtime queue size \(\d+\) exceeds maximum queue size \(\d+\), spooling to disk")
+
+	$logFolderItems = Get-ChildItem 'C:\Program Files\LogRhythm\LogRhythm Mediator Server\state\UnprocessedLogs'
+	if ($logFolderItems)
+	{
+		return $logFolderItems.Count -lt 10
+	}
+}
+
+
+
+Function CycleServices
+{
+	try
+	{
+		$crashCount++
+		Write-Host "  Attempting to self heal due to assumed crash" -ForegroundColor Yellow
+		Write-Host "  Stopping Mediator service..."
+		Stop-Service -Name scmedsvr -ErrorAction Stop
+		Write-Host "  Stopped Mediator service"
+
+		Start-Sleep -Seconds 5
+
+		Write-Host "  Restarting SQL Service..."
+		Restart-Service MSSQLSERVER -Force -ErrorAction Stop
+		Write-Host "  Restarted SQL Service"
+
+		Start-Sleep -Seconds 5
+
+		Write-Host "  Starting Mediator service..."
+		Start-Service scmedsvr -ErrorAction Stop
+		Write-Host "  Started Mediator service"
+		Start-Sleep -seconds 10
+
+	}
+	catch
+	{
+		Write-Error $_.Exception.ToString()
+	}
+}
+
+
+
+Function ValidateQueueShrink
+{
+	Write-host "  Validating that the queue is shrinking" -foregroundcolor cyan
+	$beginTime = Get-Date
+	$expireTime = $beginTime.AddMinutes ($QueueShrinkTimeout)
+	$shrinkageResult = $null
+
+	$startItemCount = (Get-ChildItem -Path $processingFolder).Count
+	if ($startItemCount -eq 0) { return $true }
+
+	Write-host "  There are $startItemCount files in processing"
+	$count = 0
+	$failedToShrinkCount = 0
+	$previousCount = $startItemCount
+	while ((Get-Date) -lt $expireTime)
+	{
+		if (-not (Test-LrHealth)) { CycleServices }
+
+		$count++
+		Start-Sleep -Seconds 30
+		$currentCount = (Get-ChildItem -Path $processingFolder).Count
+
+		if ($currentCount -eq 0)
+		{
+			Write-Host " All logs appear to have been processed" -foregroundcolor green
+			$shrinkageResult = $true
+			break
+		}
+		elseif ($currentCount -eq $previousCount)
+		{
+			Write-Host "  Still $currentCount left to process"
+			$failedToShrinkCount++
+		}
+		elseif ($currentCount -lt $previousCount)
+		{
+			$failedToShrinkCount = 0
+			Write-Host "  Log is shrinking. $currentCount / $startItemCount left."
+		}
+		if ($failedToShrinkCount -ge 10)
+		{
+			Write-Host "  It appears that logs are not being processed.  Exiting" -ForegroundColor Red
+			$shrinkageResult = $false
+			break
+		}
+
+		$previousCount = $currentCount
+
+	}
+
+	return $shrinkageResult
+}
+
+#endregion
+
+$unprocessedLogs = Get-ChildItem 'C:\Program Files\LogRhythm\LogRhythm Mediator Server\state\UnprocessedLogsToMove'
+
+if ($ToProcessLimit)
+{
+	$unprocessedLogs = $unprocessedLogs | Select -First $ToProcessLimit
+}
+
+$processingFolder = "C:\Program Files\LogRhythm\LogRhythm Mediator Server\state\UnprocessedLogs"
+$completedArchive = "C:\Program Files\LogRhythm\LogRhythm Mediator Server\state\CompletedArchive"
+$crashCount = 0
+$successCount = 0
+
+if (-not $unprocessedLogs)
+{
+	Write-Host "There are no logs that need to be processed."
+}
+
+$existingProcessingLogs = Get-ChildItem $processingFolder
+
+if ($existingProcessingLogs)
+{
+	Write-Host "There are $($existingProcessingLogs.Count) files already in the processing folder"
+	Write-Host "  Attempting to clear logs before continuing"
+	$null = ValidateQueueShrink
+}
+
+Write-Host "There are $($unprocessedLogs.Count) that need to be processed`n"
+if (-not (Test-LRHealth)) { $null = ValidateQueueShrink }
+
+foreach ($log in $unprocessedLogs)
+{
+
+	if (-not (Test-LRHealth)) { $null = ValidateQueueShrink }
+
+	$StartTime = Get-Date
+	$TimeoutTime = $StartTime.AddMinutes ($ProcessTimeout)
+
+	$logInProcessing = Join-Path -Path $processingFolder -ChildPath $log.Name
+
+	Write-Host "Processing log: $($log.Name)" -ForegroundColor Magenta
+	Write-Host "  Moving $($log.Name) to Process folder" -NoNewLine
+	Move-Item -Path $log.FullName -Destination $logInProcessing
+	Write-Host " -> Moved" -ForegroundColor Green
+
+	$whileCount = 0
+	Write-Host "  Monitoring the log in processing, timeout is set to $ProcessTimeout minutes..."
+	While ((Get-Date) -lt $TimeoutTime)
+	{
+		$whileCount++
+		Start-Sleep -Seconds 5
+		$IsStillProcessingTest = Test-Path -Path $logInProcessing
+
+		if ($IsStillProcessingTest)
+		{
+			if (($whileCount % 3) -eq 0)
+			{
+				$diff = (Get-Date) - $StartTime
+				Write-Host "  $($log.Name) time in processing -> $($diff.Minutes) mins $($diff.Seconds) seconds"
+			}
+			Continue
+		}
+
+		$successCount++
+		Write-Host "  Processed $($log.Name) Successfully --> $successCount total processed" -ForegroundColor Green
+		break
+	}
+
+	if (Test-Path -Path $logInProcessing)
+	{
+		$null = ValidateQueueShrink
+	}
+}
