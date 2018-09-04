@@ -14,7 +14,7 @@ Deploy "Deploy to Dev" {
 
     By FileSystem  {
         FromSource 'IAT'
-        To $env:DevDeployDir
+        To "$env:DevDeployDir"
         Tagged Dev
         DependingOn 'PackageInVersionDir'
         WithOptions @{
@@ -37,7 +37,7 @@ Deploy "Deploy to Prod" {
 
     By FileSystem  {
         FromSource 'IAT'
-        To $env:ProdDeployDir
+        To "$env:ProdDeployDir"
         Tagged Prod
         DependingOn 'PackageInVersionDir'
         WithOptions @{
