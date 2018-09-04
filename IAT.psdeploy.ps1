@@ -1,7 +1,7 @@
-Deploy "Deploy to $DevLocation" {
+Deploy "Deploy to Dev" {
     By FileSystem  {
-        FromSource '.'
-        To $DevLocation
+        FromSource 'IAT'
+        To 'c:\deployments\dev'
         Tagged Dev
         WithOptions @{
             Mirror = $true
@@ -9,10 +9,10 @@ Deploy "Deploy to $DevLocation" {
     }
 }
 
-Deploy "Deploy to $ProdLocation" {
+Deploy "Deploy to Prod" {
     By FileSystem  {
-        FromSource '.'
-        To $ProdLocation
+        FromSource 'IAT'
+        To 'c:\deployments\prod'
         Tagged Prod
         WithOptions @{
             Mirror = $true
