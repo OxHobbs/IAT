@@ -16,7 +16,7 @@ Deploy "Deploy to Dev" {
         FromSource 'IAT'
         To $env:DevDeployDir
         Tagged Dev
-        DependingOn 'PackageVersionDir'
+        DependingOn 'PackageInVersionDir'
         WithOptions @{
             Mirror = $true
         }
@@ -39,7 +39,7 @@ Deploy "Deploy to Prod" {
         FromSource 'IAT'
         To $env:ProdDeployDir
         Tagged Prod
-        DependingOn 'PackageVersionDir'
+        DependingOn 'PackageInVersionDir'
         WithOptions @{
             Mirror = $true
         }
