@@ -17,7 +17,8 @@ stage ('Test'){
 stage ('Publish') {
     node('windows') {
         unstash 'everything'
-        nunit testResultsPattern: '*.xml'
+        // nunit testResultsPattern: 'test*.xml'
+        nunit testResultsPattern: 'test*.xml'
     }
 }
 
