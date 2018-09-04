@@ -1,5 +1,6 @@
 $psDeployScript = "$PSScriptRoot\IAT.psdeploy.ps1"
 $testResultsFileName = 'test_report.xml'
+$coverageResultsFileName = 'test_coverage_report.xml'
 
 task default -depends Analyze, Test
 
@@ -13,7 +14,8 @@ task Analyze {
 
 task Test {
     $testPath = Join-Path $PSScriptRoot -ChildPath 'tests\unit'
-    $testResults = Invoke-Pester -Path $testpath -PassThru -OutputFile $testResultsFileName -OutputFormat NUnitXml
+    $testResults = Invoke-Pester -Path $testpath -PassThru -OutputFile $testResultsFileName -OutputFormat NUnitXml -CodeCoverage ".\functions\Test-Tests.ps1" -CodeCoverageOutputFile $coverageResultsFileName -CodeCoverageOutputFileFormat JaCoCo 
+    # invoke-pester .\tests\unit\Test-Tests.tests.ps1 -OutputFile .\test_report.xml -CodeCoverage .\functions\Test-Tests.ps1 -OutputFormat NUnitXml -CodeCoverageOutputFile .\test_report_coverage.xml -CodeCoverageOutputFileFormat 
     if ($testResults.FailedCount -gt 0) {
         $testResults | Format-List
         Write-Error -Message 'One or more Pester tests failed. Build cannot continue!'
