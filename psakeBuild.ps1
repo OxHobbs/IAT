@@ -4,7 +4,7 @@ $testResultsFileName = 'report.xml'
 task default -depends Analyze, Test
 
 task Analyze {
-    $saResults = Invoke-ScriptAnalyzer -Path $PSScriptRoot -Recurse -Verbose:$false
+    $saResults = Invoke-ScriptAnalyzer -Path $PSScriptRoot -Recurse -Severity Error -Verbose:$false
     if ($saResults) {
         $saResults | Format-Table
         Write-Error -Message 'One or more Script Analyzer errors/warnings were found. Build cannot continue!'
