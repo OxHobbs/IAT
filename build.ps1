@@ -9,6 +9,11 @@ param
 $ErrorActionPreference = 'Stop'
 $PSScriptRoot = Split-Path $MyInvocation.MyCommand.Path -Parent
 
+if (-not (Get-PackageProvider -Name 'NuGet' -ErrorAction SilentlyContinue))
+{
+    Install-PackageProvider -Name Nuget -Force -Confirm:$False
+}
+
 if (-not (Get-Module -Name Pester -ListAvailable))   { Install-Module -Name Pester -Force -Confirm:$false }
 if (-not (Get-Module -Name psake -ListAvailable))    { Install-Module -Name psake -Force -Confirm:$false }
 if (-not (Get-Module -Name PSDeploy -ListAvailable)) { Install-Module -Name PSDeploy -Force -Confirm:$false }
