@@ -1,5 +1,5 @@
 $psDeployScript = "$PSScriptRoot\IAT.psdeploy.ps1"
-$testResultsFileName = 'test_report.xml'
+$testResultsFileName = 'unittests_report.xml'
 $coverageResultsFileName = 'test_coverage_report.xml'
 
 task default -depends Analyze, Test
