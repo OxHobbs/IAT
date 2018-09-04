@@ -22,20 +22,20 @@ $requiredModules = @(
 )
 
 foreach ($requiredModule in $requiredModules)
-{   
+{
     if (-not (Get-Module -Name $requiredModule -ListAvailable))
     {
-        Install-Module -Name $requiredModule -Force -Confirm:$false 
+        Install-Module -Name $requiredModule -Force -Confirm:$false
     }
 }
 
 Invoke-psake -buildFile "$PSScriptRoot\psakeBuild.ps1" -taskList $Task -Verbose:$VerbosePreference
 
-if ($psake.build_success -eq $false) 
+if ($psake.build_success -eq $false)
 {
     exit 1
-} 
-else 
+}
+else
 {
-    exit 0 
+    exit 0
 }
