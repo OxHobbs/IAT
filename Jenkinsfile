@@ -19,7 +19,7 @@ stage ('Publish') {
         unstash 'everything'
         // nunit testResultsPattern: 'test*.xml'
         nunit testResultsPattern: 'unittests*.xml'
-        jacoco classPattern: '', execPattern: '', sourceInclusionPattern: '', sourcePattern: '*test*coverage*.xml'
+        // jacoco classPattern: '', execPattern: '', sourceInclusionPattern: '', sourcePattern: '*test*coverage*.xml'
     }
 }
 
