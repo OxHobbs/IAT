@@ -1,22 +1,22 @@
 Deploy "Deploy to Dev" {
-    By Task DevPackageInVersionDir {
-        $manifest = Import-LocalizedData -FileName 'IAT.psd1' -BaseDirectory 'IAT'
-        $version = $manifest.ModuleVersion
-        $env:DevDeployDir = "c:\deployments\dev\IAT\$version"
+    # By Task DevPackageInVersionDir {
+    #     $manifest = Import-LocalizedData -FileName 'IAT.psd1' -BaseDirectory 'IAT'
+    #     $version = $manifest.ModuleVersion
+    #     $env:DevDeployDir = "c:\deployments\dev\IAT\$version"
 
-        if (Test-Path $deployDir)
-        {
-            throw "Version is already deployed.  Must bump version properly before deploying a new version"
-        }
+    #     if (Test-Path $deployDir)
+    #     {
+    #         throw "Version is already deployed.  Must bump version properly before deploying a new version"
+    #     }
 
-        Copy-Item -Path IAT -Recurse -Destination $deployDir
-    }
+    #     Copy-Item -Path IAT -Recurse -Destination $deployDir
+    # }
 
     By FileSystem  {
         FromSource 'IAT'
-        To "$env:DevDeployDir"
+        To 'c:\deployments\dev\IAT'
         Tagged Dev
-        DependingOn 'DevPackageInVersionDir'
+        # DependingOn DevPackageInVersionDir
         WithOptions @{
             Mirror = $true
         }
@@ -24,22 +24,22 @@ Deploy "Deploy to Dev" {
 }
 
 Deploy "Deploy to Prod" {
-    By Task ProdPackageInVersionDir {
-        $manifest = Import-LocalizedData -FileName 'IAT.psd1' -BaseDirectory 'IAT'
-        $version = $manifest.ModuleVersion
-        $env:ProdDeployDir = "c:\deployments\prod\IAT\$version"
+    # By Task ProdPackageInVersionDir {
+    #     $manifest = Import-LocalizedData -FileName 'IAT.psd1' -BaseDirectory 'IAT'
+    #     $version = $manifest.ModuleVersion
+    #     $env:ProdDeployDir = "c:\deployments\prod\IAT\$version"
 
-        if (Test-Path $deployDir)
-        {
-            throw "Version is already deployed.  Must bump version properly before deploying a new version"
-        }
-    }
+    #     if (Test-Path $deployDir)
+    #     {
+    #         throw "Version is already deployed.  Must bump version properly before deploying a new version"
+    #     }
+    # }
 
     By FileSystem  {
         FromSource 'IAT'
-        To "$env:ProdDeployDir"
+        To "c:\deployments\prod\IAT"
         Tagged Prod
-        DependingOn 'ProdPackageInVersionDir'
+        # DependingOn ProdPackageInVersionDir
         WithOptions @{
             Mirror = $true
         }
