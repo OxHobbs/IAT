@@ -12,7 +12,8 @@ task Analyze {
 }
 
 task Test {
-    $testResults = Invoke-Pester -Path $PSScriptRoot -PassThru -OutputFile $testResultsFileName -OutputFormat NUnitXml
+    $testPath = Join-Path $PSScriptRoot -ChildPath 'tests\unit'
+    $testResults = Invoke-Pester -Path $testpath -PassThru -OutputFile $testResultsFileName -OutputFormat NUnitXml
     if ($testResults.FailedCount -gt 0) {
         $testResults | Format-List
         Write-Error -Message 'One or more Pester tests failed. Build cannot continue!'
