@@ -1,5 +1,5 @@
 $psDeployScript = "$PSScriptRoot\Deploy.psdeploy.ps1"
-$testResultsFileName = 'report.xml'
+$testResultsFileName = 'test_report.xml'
 
 task default -depends Analyze, Test
 
@@ -12,7 +12,7 @@ task Analyze {
 }
 
 task Test {
-    $testResults = Invoke-Pester -Path $PSScriptRoot -PassThru -OutputFile $testResultsFileName
+    $testResults = Invoke-Pester -Path $PSScriptRoot -PassThru -OutputFile $testResultsFileName -OutputFormat NUnitXml
     if ($testResults.FailedCount -gt 0) {
         $testResults | Format-List
         Write-Error -Message 'One or more Pester tests failed. Build cannot continue!'

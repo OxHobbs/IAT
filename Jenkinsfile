@@ -1,7 +1,8 @@
 stage('Analyze'){
     node('windows') {
         checkout scm
-        stash 'everything'
+        // stash 'everything'
+        stash excludes: 'test_report*', name: 'everything'
         powershell '.\\build.ps1 -Task \'Analyze\''
     }
 }
