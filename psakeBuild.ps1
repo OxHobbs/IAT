@@ -1,4 +1,4 @@
-$psDeployScript = "$PSScriptRoot\Deploy.psdeploy.ps1"
+$psDeployScript = "$PSScriptRoot\IAT.psdeploy.ps1"
 $testResultsFileName = 'test_report.xml'
 
 task default -depends Analyze, Test
