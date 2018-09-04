@@ -13,9 +13,9 @@ task Analyze {
 }
 
 task Test {
-    $testPath = Join-Path $PSScriptRoot -ChildPath 'tests\unit'
+    $testPath = Join-Path $PSScriptRoot -ChildPath 'IAT\tests\unit'
     $testResults = Invoke-Pester -Path $testpath -PassThru -OutputFile $testResultsFileName -OutputFormat NUnitXml 
-    $null = Invoke-Pester -CodeCoverage ".\functions\Test-Tests.ps1" -CodeCoverageOutputFile $coverageResultsFileName -CodeCoverageOutputFileFormat JaCoCo 
+    $null = Invoke-Pester -CodeCoverage ".\IAT\functions\Test-Tests.ps1" -CodeCoverageOutputFile $coverageResultsFileName -CodeCoverageOutputFileFormat JaCoCo 
     if ($testResults.FailedCount -gt 0) {
         $testResults | Format-List
         Write-Error -Message 'One or more Pester tests failed. Build cannot continue!'
