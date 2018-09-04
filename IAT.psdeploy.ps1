@@ -2,7 +2,7 @@ Deploy "Deploy to Dev" {
     By Task PackageInVersionDir {
         $manifest = Import-LocalizedData -FileName 'IAT.psd1' -BaseDirectory 'IAT'
         $version = $manifest.ModuleVersion
-        $script:deployDir = "c:\deployments\dev\IAT\$version"
+        $env:DevDeployDir = "c:\deployments\dev\IAT\$version"
 
         if (Test-Path $deployDir)
         {
@@ -14,7 +14,7 @@ Deploy "Deploy to Dev" {
 
     By FileSystem  {
         FromSource 'IAT'
-        To $script:deployDir
+        To $env:DevDeployDir
         Tagged Dev
         DependingOn 'PackageVersionDir'
         WithOptions @{
@@ -27,7 +27,7 @@ Deploy "Deploy to Prod" {
     By Task PackageInVersionDir {
         $manifest = Import-LocalizedData -FileName 'IAT.psd1' -BaseDirectory 'IAT'
         $version = $manifest.ModuleVersion
-        $script:deployDir = "c:\deployments\prod\IAT\$version"
+        $env:ProdDeployDir = "c:\deployments\prod\IAT\$version"
 
         if (Test-Path $deployDir)
         {
@@ -37,7 +37,7 @@ Deploy "Deploy to Prod" {
 
     By FileSystem  {
         FromSource 'IAT'
-        To $script:deployDir
+        To $env:ProdDeployDir
         Tagged Prod
         DependingOn 'PackageVersionDir'
         WithOptions @{
