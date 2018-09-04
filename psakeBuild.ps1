@@ -23,6 +23,7 @@ task Test {
 }
 
 task DeployToDev {
+    
     Invoke-PSDeploy -Path $psDeployScript -Verbose:$VerbosePreference -Tags Dev -Force
 }
 
