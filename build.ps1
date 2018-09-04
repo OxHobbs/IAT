@@ -14,9 +14,20 @@ if (-not (Get-PackageProvider -Name 'NuGet' -ErrorAction SilentlyContinue))
     Install-PackageProvider -Name Nuget -Force -Confirm:$False
 }
 
-if (-not (Get-Module -Name Pester -ListAvailable))   { Install-Module -Name Pester -Force -Confirm:$false }
-if (-not (Get-Module -Name psake -ListAvailable))    { Install-Module -Name psake -Force -Confirm:$false }
-if (-not (Get-Module -Name PSDeploy -ListAvailable)) { Install-Module -Name PSDeploy -Force -Confirm:$false }
+$requiredModules = @(
+    'Pester',
+    'psake',
+    'PSDeploy',
+    'PSScriptAnalyzer'
+)
+
+foreach ($requiredModule in $requiredModules)
+{   
+    if (-not (Get-Module -Name $requiredModule -ListAvailable))
+    {
+        Install-Module -Name $requiredModule -Force -Confirm:$false 
+    }
+}
 
 Invoke-psake -buildFile "$PSScriptRoot\psakeBuild.ps1" -taskList $Task -Verbose:$VerbosePreference
 
