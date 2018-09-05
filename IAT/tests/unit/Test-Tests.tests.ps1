@@ -21,9 +21,4 @@ Describe 'Test-Tests' {
             { Test-Tests -Branch 'Four' } | Should -Throw 
         }
     }
-
-
-
-
-
 }
