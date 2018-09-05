@@ -5,7 +5,7 @@ function Test-Tests
     param
     (
         [Parameter()]
-        [ValidateSet('One', 'Two')]
+        [ValidateSet('One', 'Two', 'Three')]
         [String]
         $Branch
     )
@@ -17,5 +17,9 @@ function Test-Tests
     elseif ($Branch -eq 'Two')
     {
         Write-Output "Branch2"
+    }
+    elseif ($Branch -eq 'Three')
+    {
+        Write-Output 'Branch3'
     }
 }
