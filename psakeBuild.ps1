@@ -15,7 +15,7 @@ task Analyze {
 task Test {
     $testPath = Join-Path $PSScriptRoot -ChildPath 'IAT\tests\unit'
     $testResults = Invoke-Pester -Path $testpath -PassThru -OutputFile $testResultsFileName -OutputFormat NUnitXml 
-    $coverageResults = Invoke-Pester -CodeCoverage ".\IAT\functions\Test-Tests.ps1" -CodeCoverageOutputFile $coverageResultsFileName -CodeCoverageOutputFileFormat JaCoCo 
+    $coverageResults = Invoke-Pester -CodeCoverage ".\IAT\functions\Test-Tests.ps1" -CodeCoverageOutputFile $coverageResultsFileName -CodeCoverageOutputFileFormat JaCoCo -PassThru
 
     if ($testResults.FailedCount -gt 0) {
         $testResults | Format-List
