@@ -14,6 +14,13 @@ stage ('Test'){
     }
 }
 
+stage('Coverage') {
+    node('windows') {
+        unstash 'everything'
+        powershell '.\\build.ps1 -Task \'Coverage\''
+    }
+}
+
 stage ('Publish') {
     node('windows') {
         unstash 'everything'
