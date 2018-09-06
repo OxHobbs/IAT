@@ -29,6 +29,8 @@ task Test {
     {
         throw "Code Coverage is too low for a passing build ($coveragePercent)"
     }
+
+    Write-Output "Code Coverage is sufficient to pass tests ($coveragePercent)"
 }
 
 task DeployToDev {
