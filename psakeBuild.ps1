@@ -15,10 +15,19 @@ task Analyze {
 task Test {
     $testPath = Join-Path $PSScriptRoot -ChildPath 'IAT\tests\unit'
     $testResults = Invoke-Pester -Path $testpath -PassThru -OutputFile $testResultsFileName -OutputFormat NUnitXml 
-    $null = Invoke-Pester -CodeCoverage ".\IAT\functions\Test-Tests.ps1" -CodeCoverageOutputFile $coverageResultsFileName -CodeCoverageOutputFileFormat JaCoCo 
+    $coverageResults = Invoke-Pester -CodeCoverage ".\IAT\functions\Test-Tests.ps1" -CodeCoverageOutputFile $coverageResultsFileName -CodeCoverageOutputFileFormat JaCoCo 
+
     if ($testResults.FailedCount -gt 0) {
         $testResults | Format-List
         Write-Error -Message 'One or more Pester tests failed. Build cannot continue!'
+    }
+
+    $coveragePercent = ($coverageResults.CodeCoverage.NumberOfCommandsExecuted / $coverageResults.CodeCoverage.NumberOfCommandsAnalyzed) * 100
+    Write-Output "Code Coverage: $coveragePercent%"
+
+    if ($coveragePercent -lt 80)
+    {
+        throw "Code Coverage is too low for a passing build ($coveragePercent)"
     }
 }
 
