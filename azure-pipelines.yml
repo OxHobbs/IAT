@@ -28,3 +28,9 @@ phases:
 
   - powershell: .\build.ps1 -Task "Coverage"
     displayName: run test coverage report
+
+  - task: PublishCodeCoverageResults@1
+    displayName: 'Publish code coverage from **/test_coverage_report.xml'
+    inputs:
+      summaryFileLocation: '**/test_coverage_report.xml'
+
