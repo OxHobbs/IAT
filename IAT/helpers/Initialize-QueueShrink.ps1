@@ -14,7 +14,7 @@ Function Initialize-QueueShrink
 	$expireTime = $beginTime.AddMinutes($QueueShrinkTimeout)
 	$shrinkageResult = $null
 
-	$startItemCount = (Get-ChildItem -Path $processingFolder).Count
+	$startItemCount = Get-StartItemCount -Path $processingFolder
 	if ($startItemCount -eq 0) { return $true }
 
 	Write-host "  There are $startItemCount files in processing"
@@ -27,7 +27,7 @@ Function Initialize-QueueShrink
 
 		$count++
 		Start-Sleep -Seconds 30
-		$currentCount = (Get-ChildItem -Path $processingFolder).Count
+		$currentCount = Get-CurrentItemCount
 
 		if ($currentCount -eq 0)
 		{
@@ -57,4 +57,25 @@ Function Initialize-QueueShrink
 	}
 
 	return $shrinkageResult
+}
+
+
+function Get-StartItemCount
+{
+	param
+	(
+		$Path
+	)
+
+	return (Get-ChildItem -Path $Path).Count
+}
+
+function Get-CurrentItemCount
+{
+	param
+	(
+		$Path
+	)
+
+	return (Get-ChildItem -Path $Path).Count
 }
