@@ -49,6 +49,6 @@ phases:
   - task: PublishBuildDrop@0
     displayName: 'Publish Build Drop'
     inputs:
-      targetpath: PackageSxS/IAT
+      targetpath: PackageSxS
 
 
