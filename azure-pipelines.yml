@@ -41,7 +41,7 @@ phases:
   - task: CopyFiles@2
     displayName: 'Copy Files to: $(Build.ArtifactStagingDirectory)'
     inputs:
-      SourceFolder: '**/PackageSxS'
+      Conents: 'IAT/**'
       TargetFolder: '$(Build.ArtifactStagingDirectory)'
       CleanTargetFolder: true
       OverWrite: true
