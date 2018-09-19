@@ -35,7 +35,7 @@ phases:
       summaryFileLocation: '**/test_coverage_report.xml'
       reportDirectory: '**/'
 
-  - powershell: .\build.ps1 -Task "PacakgeSxS"
+  - powershell: .\build.ps1 -Task "PackageSxS"
     displayName: Package module in SxS directory
 
   - task: CopyFiles@2
