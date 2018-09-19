@@ -9,5 +9,10 @@ phases:
       Install-Module psake -Force
       Install-Module psdeploy -Force
       Install-Module Pester -Force -SkipPublisherCheck
+    displayName: Install prerequisites
   - powershell: |
       Invoke-Pester ./IAT/tests/unit
+    displayName: run unit tests
+  - powershell: |
+      .\build.ps1 -Task "Analyze"
+    displayName: Run Script Analyzer
