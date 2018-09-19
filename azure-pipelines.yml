@@ -45,3 +45,10 @@ phases:
       TargetFolder: '$(Build.ArtifactStagingDirectory)'
       CleanTargetFolder: true
       OverWrite: true
+
+  - task: PublishBuildDrop@0
+    displayName: 'Publish Build Drop'
+    inputs:
+      targetpath: PackageSxS/IAT
+
+
