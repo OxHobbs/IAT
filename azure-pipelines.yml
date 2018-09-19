@@ -19,5 +19,12 @@ phases:
       .\build.ps1 -Task "Test"
     displayName: run unit tests
 
+  - task: PublishTestResults@2
+    displayName: 'Publish Test Results **/unittests_report.xml'
+    inputs:
+      testRunner: NUnit
+      testResultsFiles: '**/unittests_report.xml'
+      testRunTitle: 'IAT Unit Test Results'
+
   - powershell: .\build.ps1 -Task "Coverage"
     displayName: run test coverage report
