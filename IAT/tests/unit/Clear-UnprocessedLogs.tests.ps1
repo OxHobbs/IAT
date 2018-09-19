@@ -10,4 +10,8 @@ Describe 'Test for testing' {
     It "Should have numbers 3 as well" {
         3 | Should -Be 3
     }
+
+    It "Should have numbers 4 as well" {
+        4 | Should -Be 4
+    }
 }
