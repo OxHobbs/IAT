@@ -33,4 +33,4 @@ phases:
     displayName: 'Publish code coverage from **/test_coverage_report.xml'
     inputs:
       summaryFileLocation: '**/test_coverage_report.xml'
-
+      reportDirectory: '**/'
