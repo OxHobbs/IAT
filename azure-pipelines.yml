@@ -34,3 +34,14 @@ phases:
     inputs:
       summaryFileLocation: '**/test_coverage_report.xml'
       reportDirectory: '**/'
+
+  - powershell: .\build.ps1 -Task "PacakgeSxS"
+    displayName: Package module in SxS directory
+
+  - task: CopyFiles@2
+    displayName: 'Copy Files to: $(Build.ArtifactStagingDirectory)'
+    inputs:
+      SourceFolder: '**/PackageSxS'
+      TargetFolder: '$(Build.ArtifactStagingDirectory)'
+      CleanTargetFolder: true
+      OverWrite: true

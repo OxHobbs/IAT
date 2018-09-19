@@ -2,7 +2,7 @@ $psDeployScript = "$PSScriptRoot\IAT.psdeploy.ps1"
 $testResultsFileName = 'unittests_report.xml'
 $coverageResultsFileName = 'test_coverage_report.xml'
 
-task default -depends Analyze, Test, Coverage
+task default -depends Analyze, Test, Coverage, PackageSxS
 
 task Analyze {
     $saResults = Invoke-ScriptAnalyzer -Path $PSScriptRoot -Recurse -Severity Error -Verbose:$false
@@ -37,8 +37,13 @@ task Coverage {
 
 }
 
+task PackageSxS {
+    $version = (Invoke-Expression (Get-Content .\IAT\IAT.psd1 | Out-String)).ModuleVersion
+    $package = New-Item -ItemType Directory -Path ".\PackageSxS\IAT\$version" -Force
+    Copy-Item -Recurse -Path ".\IAT\*" -Destination $package.FullName
+}
+
 task DeployToDev {
-    
     Invoke-PSDeploy -Path $psDeployScript -Verbose:$VerbosePreference -Tags Dev -Force
 }
 
