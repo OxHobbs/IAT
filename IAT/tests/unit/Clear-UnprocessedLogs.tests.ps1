@@ -11,7 +11,7 @@ Describe 'Test for testing' {
         3 | Should -Be 3
     }
 
-    It "Should have numbers 4" {
+    It "Should have numbers 4 as well" {
         4 | Should -Be 4
     }
 }
