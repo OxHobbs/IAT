@@ -1,0 +1,13 @@
+name: IAT build and release pipeline
+
+
+phases:
+- phase: Build
+  queue: Hosted VS2017
+  steps:
+  - powershell: |
+      Install-Module psake -Force
+      Install-Module psdeploy -Force
+      Install-Module Pester -Force -SkipPublisherCheck
+  - powershell: |
+      Invoke-Pester ./IAT/tests/unit
